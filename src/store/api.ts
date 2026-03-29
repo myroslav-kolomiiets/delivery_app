@@ -1,3 +1,4 @@
+import { CreateOrderBody, Order, Product, Shop } from './types';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 export const api = createApi({
@@ -7,17 +8,17 @@ export const api = createApi({
   }),
   endpoints: (builder) => ({
     // shops
-    getShops: builder.query<any[], void>({
+    getShops: builder.query<Shop[], void>({
       query: () => '/shops',
     }),
 
     // products
-    getProducts: builder.query<any[], string>({
+    getProducts: builder.query<Product[], string>({
       query: (shopId) => `/products?shopId=${shopId}`,
     }),
 
     // create order
-    createOrder: builder.mutation<any, any>({
+    createOrder: builder.mutation<Order, CreateOrderBody>({
       query: (body) => ({
         url: '/orders',
         method: 'POST',
@@ -25,7 +26,7 @@ export const api = createApi({
       }),
     }),
 
-    getOrders: builder.query({
+    getOrders: builder.query<Order[], void>({
       query: () => '/orders',
     }),
   }),
