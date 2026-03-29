@@ -33,7 +33,9 @@ export default function ShopsPage() {
   const [page, setPage] = useState(1);
   const pageSize = 4;
 
-  const isInCart = (id: string) => cartItems.some((item) => item.product.id === id);
+  const cartIds = new Set(cartItems.map((i) => i.product.id));
+  const isInCart = (id: string) => cartIds.has(id);
+
   const { data: products, isLoading: productsLoading } = useGetProductsQuery(
     selectedShopId!,
     {
@@ -106,7 +108,7 @@ export default function ShopsPage() {
         )}
       </Grid>
 
-      {/* 🍔 Products */}
+      {/* Products */}
       <Box mb={3}>
         <Typography variant="h6">Filters</Typography>
 
@@ -199,7 +201,7 @@ export default function ShopsPage() {
           ) : (
             <Grid container spacing={2}>
               {paginatedProducts.map((product) => {
-                const isInCart = cartItems.some((item) => item.product.id === product.id);
+                const inCart = isInCart(product.id);
                 return (
                   <Grid size={{ xs: 12, md: 3 }} key={product.id}>
                     <Card>
@@ -211,8 +213,8 @@ export default function ShopsPage() {
                         <Typography variant="body2">{product.category}</Typography>
 
                         <Button
-                          variant={isInCart ? 'outlined' : 'contained'}
-                          color={isInCart ? 'success' : 'primary'}
+                          variant={inCart ? 'outlined' : 'contained'}
+                          color={inCart ? 'success' : 'primary'}
                           sx={{ mt: 2 }}
                           onClick={() => {
                             dispatch(addToCart(product));
@@ -220,9 +222,9 @@ export default function ShopsPage() {
                               variant: 'success',
                             });
                           }}
-                          disabled={isInCart}
+                          disabled={inCart}
                         >
-                          {isInCart ? 'In cart ✓' : 'Add to cart'}
+                          {inCart ? 'In cart ✓' : 'Add to cart'}
                         </Button>
                       </CardContent>
                     </Card>
