@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { Product, CartItem } from '@/store/types';
 
 const loadCart = () => {
   if (typeof window === 'undefined') return [];
@@ -7,7 +8,7 @@ const loadCart = () => {
   return data ? JSON.parse(data) : [];
 };
 
-const saveCart = (items: any[]) => {
+const saveCart = (items: CartItem[]) => {
   if (typeof window !== 'undefined') {
     localStorage.setItem('cart', JSON.stringify(items));
   }
@@ -15,7 +16,7 @@ const saveCart = (items: any[]) => {
 
 const initialState = {
   items: loadCart() as {
-    product: any;
+    product: Product;
     quantity: number;
   }[],
 };
@@ -59,7 +60,7 @@ const cartSlice = createSlice({
     },
 
     addManyToCart: (state, action) => {
-      action.payload.forEach((item) => {
+      action.payload.forEach((item: CartItem) => {
         const existing = state.items.find((i) => i.product.id === item.product.id);
 
         if (existing) {
