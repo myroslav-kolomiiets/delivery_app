@@ -1,39 +1,26 @@
 import { prisma } from '@/lib/prisma';
-import { NextResponse } from 'next/server';
 
-export async function POST(request: Request) {
-  try {
-    const body = await request.json();
+export async function POST(req: Request) {
+  const body = await req.json();
 
-    const { email, phone, address, items } = body;
+  const order = await prisma.order.create({
+    data: {
+      email: body.email,
+      phone: body.phone,
+      address: body.address,
 
-    // basic validation
-    if (!email || !phone || !address || !items?.length) {
-      return NextResponse.json({ error: 'Invalid data' }, { status: 400 });
-    }
-
-    const order = await prisma.order.create({
-      data: {
-        email,
-        phone,
-        address,
-        items: {
-          create: items.map((item: any) => ({
-            productId: item.productId,
-            quantity: item.quantity,
-          })),
-        },
+      items: {
+        create: body.items.map((item: any) => ({
+          quantity: item.quantity,
+          product: {
+            connect: { id: item.productId },
+          },
+        })),
       },
-      include: {
-        items: true,
-      },
-    });
+    },
+  });
 
-    return NextResponse.json(order);
-  } catch (error) {
-    console.error(error);
-    return NextResponse.json({ error: 'Failed to create order' }, { status: 500 });
-  }
+  return Response.json(order);
 }
 
 export async function GET() {

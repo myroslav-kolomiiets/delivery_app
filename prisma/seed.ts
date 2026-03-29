@@ -58,7 +58,7 @@ async function main() {
     });
   }
 
-  console.log('🌱 Database seeded');
+  console.log('Database seeded');
 }
 
 main()

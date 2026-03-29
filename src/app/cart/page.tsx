@@ -2,6 +2,7 @@
 
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/store';
+import { useSnackbar } from 'notistack';
 import { changeQuantity, clearCart, removeFromCart } from '@/store/cartSlice';
 import { useCreateOrderMutation } from '@/store/api';
 import {
@@ -31,7 +32,7 @@ export default function CartPage() {
   const dispatch = useDispatch();
   const items = useSelector((state: RootState) => state.cart.items);
   const [success, setSuccess] = useState(false);
-
+  const { enqueueSnackbar } = useSnackbar();
   const [createOrder, { isLoading }] = useCreateOrderMutation();
 
   const {
@@ -56,10 +57,15 @@ export default function CartPage() {
       dispatch(clearCart());
       reset();
 
+      enqueueSnackbar('Order placed successfully 🎉', {
+        variant: 'success',
+      });
       setSuccess(true);
     } catch (e) {
       console.error(e);
-      alert('Error creating order'); // change to toast or similar
+      enqueueSnackbar('Error creating order ❌', {
+        variant: 'error',
+      });
     }
   };
 
@@ -74,7 +80,9 @@ export default function CartPage() {
       </Typography>
 
       {/* 🛒 Items */}
-      {items.length === 0 && !success && <Typography>Your cart is empty</Typography>}
+      {items.length === 0 && !success && (
+        <Typography color="text.secondary">Your cart is empty 🛒</Typography>
+      )}
 
       {success && (
         <Typography color="success.main">Order created successfully 🎉</Typography>
@@ -160,7 +168,7 @@ export default function CartPage() {
           </Grid>
 
           <Button type="submit" variant="contained" sx={{ mt: 3 }} disabled={isLoading}>
-            Submit Order
+            {isLoading ? 'Placing order...' : 'Submit Order'}
           </Button>
         </Box>
       )}

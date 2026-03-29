@@ -10,9 +10,6 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
   },
-  "prisma": {
-    "seed": "ts-node prisma/seed.ts"
-  },
   "dependencies": {
     "@emotion/cache": "^11.14.0",
     "@emotion/react": "^11.14.0",
@@ -22,14 +19,12 @@
     "@mui/icons-material": "^7.3.9",
     "@mui/material": "^7.3.9",
     "@mui/material-nextjs": "^7.3.9",
-    "@prisma/adapter-pg": "^7.6.0",
-    "@prisma/client": "^7.6.0",
+    "@prisma/client": "^5.22.0",
     "@reduxjs/toolkit": "^2.11.2",
     "dotenv": "^17.3.1",
     "eslint-plugin-import": "^2.32.0",
     "next": "16.2.1",
-    "pg": "^8.20.0",
-    "prisma": "^7.6.0",
+    "notistack": "^3.0.2",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "react-hook-form": "^7.72.0",
@@ -51,6 +46,7 @@
     "eslint-plugin-react": "^7.37.5",
     "globals": "^17.4.0",
     "prettier": "^3.8.1",
+    "prisma": "^5.22.0",
     "ts-node": "^10.9.2",
     "typescript": "^5",
     "typescript-eslint": "^8.57.2"

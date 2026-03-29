@@ -5,10 +5,12 @@ import { Box, Typography, Card, CardContent, Button } from '@mui/material';
 import { useDispatch } from 'react-redux';
 import { addManyToCart } from '@/store/cartSlice';
 import { OrderItem, Order } from '@/store/types';
+import { useRouter } from 'next/navigation';
 
 export default function OrdersPage() {
   const { data: orders, isLoading } = useGetOrdersQuery();
   const dispatch = useDispatch();
+  const router = useRouter();
 
   if (isLoading) return <Typography>Loading...</Typography>;
 
@@ -32,7 +34,10 @@ export default function OrdersPage() {
             <Button
               variant="contained"
               sx={{ mt: 2 }}
-              onClick={() => dispatch(addManyToCart(order.items))}
+              onClick={() => {
+                dispatch(addManyToCart(order.items));
+                router.push('/cart');
+              }}
             >
               Order again
             </Button>

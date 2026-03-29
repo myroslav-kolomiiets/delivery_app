@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useSnackbar } from 'notistack';
 import { useGetProductsQuery, useGetShopsQuery } from '@/store/api';
 import {
   Box,
@@ -24,7 +25,7 @@ export default function ShopsPage() {
   const [sortOption, setSortOption] = useState<string>('');
   const [minRating, setMinRating] = useState<number>(0);
   const cartItems = useSelector((state: RootState) => state.cart.items);
-
+  const { enqueueSnackbar } = useSnackbar();
   const categories = ['Burgers', 'Drinks', 'Desserts', 'Snacks'];
 
   const { data: shops, isLoading: shopsLoading } = useGetShopsQuery();
@@ -32,6 +33,7 @@ export default function ShopsPage() {
   const [page, setPage] = useState(1);
   const pageSize = 4;
 
+  const isInCart = (id: string) => cartItems.some((item) => item.product.id === id);
   const { data: products, isLoading: productsLoading } = useGetProductsQuery(
     selectedShopId!,
     {
@@ -151,9 +153,6 @@ export default function ShopsPage() {
         {/* Sorting */}
         <Box mt={2}>
           <FormControl>
-            {/*<InputLabel variant="standard" htmlFor="uncontrolled-native">*/}
-            {/*    Sort by*/}
-            {/*</InputLabel>*/}
             <NativeSelect
               defaultValue={30}
               disabled={!selectedShopId}
@@ -215,7 +214,12 @@ export default function ShopsPage() {
                           variant={isInCart ? 'outlined' : 'contained'}
                           color={isInCart ? 'success' : 'primary'}
                           sx={{ mt: 2 }}
-                          onClick={() => dispatch(addToCart(product))}
+                          onClick={() => {
+                            dispatch(addToCart(product));
+                            enqueueSnackbar(`${product.name} added to cart 🛒`, {
+                              variant: 'success',
+                            });
+                          }}
                           disabled={isInCart}
                         >
                           {isInCart ? 'In cart ✓' : 'Add to cart'}
