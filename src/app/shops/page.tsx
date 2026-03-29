@@ -1,7 +1,7 @@
-'use client'
+'use client';
 
-import { useEffect, useState } from 'react'
-import { useGetProductsQuery, useGetShopsQuery } from '@/store/api'
+import { useEffect, useState } from 'react';
+import { useGetProductsQuery, useGetShopsQuery } from '@/store/api';
 import {
   Box,
   Button,
@@ -12,36 +12,36 @@ import {
   NativeSelect,
   Skeleton,
   Typography,
-} from '@mui/material'
-import { useDispatch, useSelector } from 'react-redux'
-import { addToCart } from '@/store/cartSlice'
-import { RootState } from '@/store'
+} from '@mui/material';
+import { useDispatch, useSelector } from 'react-redux';
+import { addToCart } from '@/store/cartSlice';
+import { RootState } from '@/store';
 
 export default function ShopsPage() {
-  const dispatch = useDispatch()
-  const [selectedShopId, setSelectedShopId] = useState<string | null>(null)
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([])
-  const [sortOption, setSortOption] = useState<string>('')
-  const [minRating, setMinRating] = useState<number>(0)
-  const cartItems = useSelector((state: RootState) => state.cart.items)
+  const dispatch = useDispatch();
+  const [selectedShopId, setSelectedShopId] = useState<string | null>(null);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [sortOption, setSortOption] = useState<string>('');
+  const [minRating, setMinRating] = useState<number>(0);
+  const cartItems = useSelector((state: RootState) => state.cart.items);
 
-  const categories = ['Burgers', 'Drinks', 'Desserts', 'Snacks']
+  const categories = ['Burgers', 'Drinks', 'Desserts', 'Snacks'];
 
-  const { data: shops, isLoading: shopsLoading } = useGetShopsQuery()
+  const { data: shops, isLoading: shopsLoading } = useGetShopsQuery();
 
-  const [page, setPage] = useState(1)
-  const pageSize = 4
+  const [page, setPage] = useState(1);
+  const pageSize = 4;
 
   const { data: products, isLoading: productsLoading } = useGetProductsQuery(
     selectedShopId!,
     {
       skip: !selectedShopId,
     },
-  )
+  );
 
   useEffect(() => {
-    setPage(1)
-  }, [selectedCategories, sortOption, selectedShopId])
+    setPage(1);
+  }, [selectedCategories, sortOption, selectedShopId]);
 
   const filteredProducts = products
     ? [...products]
@@ -51,18 +51,21 @@ export default function ShopsPage() {
             : selectedCategories.includes(product.category),
         )
         .sort((a, b) => {
-          if (sortOption === 'price-asc') return a.price - b.price
-          if (sortOption === 'price-desc') return b.price - a.price
-          if (sortOption === 'name') return a.name.localeCompare(b.name)
-          return 0
+          if (sortOption === 'price-asc') return a.price - b.price;
+          if (sortOption === 'price-desc') return b.price - a.price;
+          if (sortOption === 'name') return a.name.localeCompare(b.name);
+          return 0;
         })
-    : []
+    : [];
 
-  const totalPages = Math.ceil(filteredProducts.length / pageSize)
+  const totalPages = Math.ceil(filteredProducts.length / pageSize);
 
-  const paginatedProducts = filteredProducts.slice((page - 1) * pageSize, page * pageSize)
+  const paginatedProducts = filteredProducts.slice(
+    (page - 1) * pageSize,
+    page * pageSize,
+  );
 
-  const filteredShops = shops?.filter((shop) => shop.rating >= minRating)
+  const filteredShops = shops?.filter((shop) => shop.rating >= minRating);
 
   return (
     <Box p={3}>
@@ -75,14 +78,14 @@ export default function ShopsPage() {
         {shopsLoading ? (
           <Grid container spacing={2}>
             {[1, 2, 3].map((i) => (
-              <Grid item xs={12} md={4} key={i}>
+              <Grid size={{ xs: 12, md: 4 }} key={i}>
                 <Skeleton variant="rectangular" height={100} />
               </Grid>
             ))}
           </Grid>
         ) : (
           filteredShops?.map((shop) => (
-            <Grid item xs={12} md={4} key={shop.id}>
+            <Grid size={{ xs: 12, md: 4 }} key={shop.id}>
               <Card
                 onClick={() => setSelectedShopId(shop.id)}
                 sx={{
@@ -115,7 +118,7 @@ export default function ShopsPage() {
               onClick={() => {
                 setSelectedCategories((prev) =>
                   prev.includes(cat) ? prev.filter((c) => c !== cat) : [...prev, cat],
-                )
+                );
               }}
             >
               {cat}
@@ -124,8 +127,8 @@ export default function ShopsPage() {
           <Button
             disabled={!selectedShopId}
             onClick={() => {
-              setSelectedCategories([])
-              setSortOption('')
+              setSelectedCategories([]);
+              setSortOption('');
             }}
           >
             Reset
@@ -170,8 +173,8 @@ export default function ShopsPage() {
           <Button
             disabled={!selectedShopId}
             onClick={() => {
-              setSelectedCategories([])
-              setSortOption('')
+              setSelectedCategories([]);
+              setSortOption('');
             }}
           >
             Reset
@@ -187,7 +190,7 @@ export default function ShopsPage() {
           {productsLoading ? (
             <Grid container spacing={2}>
               {[1, 2, 3, 4].map((i) => (
-                <Grid item xs={12} md={3} key={i}>
+                <Grid size={{ xs: 12, md: 4 }} key={i}>
                   <Skeleton variant="rectangular" height={150} />
                 </Grid>
               ))}
@@ -197,9 +200,9 @@ export default function ShopsPage() {
           ) : (
             <Grid container spacing={2}>
               {paginatedProducts.map((product) => {
-                const isInCart = cartItems.some((item) => item.product.id === product.id)
+                const isInCart = cartItems.some((item) => item.product.id === product.id);
                 return (
-                  <Grid item xs={12} md={3} key={product.id}>
+                  <Grid size={{ xs: 12, md: 3 }} key={product.id}>
                     <Card>
                       <CardContent>
                         <Typography variant="h6">{product.name}</Typography>
@@ -220,7 +223,7 @@ export default function ShopsPage() {
                       </CardContent>
                     </Card>
                   </Grid>
-                )
+                );
               })}
             </Grid>
           )}
@@ -248,5 +251,5 @@ export default function ShopsPage() {
         </Button>
       </Box>
     </Box>
-  )
+  );
 }
