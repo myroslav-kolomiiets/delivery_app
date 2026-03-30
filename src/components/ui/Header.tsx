@@ -243,6 +243,7 @@ export default function Header() {
                             minWidth: 18,
                             height: 18,
                             fontSize: '0.7rem',
+                            right: '-5px',
                           },
                         }}
                       />

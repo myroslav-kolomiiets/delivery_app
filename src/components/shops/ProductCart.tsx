@@ -11,6 +11,7 @@ import {
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import type { Product } from '@/store/types';
+import { getProductImageByCategory } from '@/lib/product-images';
 
 type ProductCartProps = {
   product: Product;
@@ -28,6 +29,7 @@ export function ProductCart({
   isLoading = false,
 }: ProductCartProps) {
   const loading = loadingProductId === product.id;
+  const imageSrc = getProductImageByCategory(product.category);
 
   if (isLoading) {
     return (
@@ -35,13 +37,14 @@ export function ProductCart({
         sx={{
           width: '100%',
           height: '100%',
-          minHeight: 240,
+          minHeight: 360,
           borderRadius: 3,
           border: '1px solid',
           borderColor: 'divider',
           overflow: 'hidden',
         }}
       >
+        <Skeleton variant="rectangular" height={180} />
         <CardContent
           sx={{
             height: '100%',
@@ -68,7 +71,7 @@ export function ProductCart({
       sx={{
         width: '100%',
         height: '100%',
-        minHeight: 240,
+        minHeight: 360,
         border: '1px solid',
         borderColor: inCart ? 'success.main' : 'divider',
         borderRadius: 3,
@@ -84,9 +87,31 @@ export function ProductCart({
         },
       }}
     >
+      <Box
+        sx={{
+          height: 180,
+          backgroundColor: 'grey.100',
+          overflow: 'hidden',
+          position: 'relative',
+        }}
+      >
+        <Box
+          component="img"
+          src={imageSrc}
+          alt={product.name}
+          sx={{
+            width: '100%',
+            height: '85%',
+            p: 2,
+            objectFit: 'contain',
+            display: 'block',
+          }}
+        />
+      </Box>
+
       <CardContent
         sx={{
-          height: '100%',
+          height: 'calc(100% - 180px)',
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'space-between',

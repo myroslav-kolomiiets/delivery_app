@@ -13,7 +13,6 @@ export default function ShopsPage() {
 
   const {
     shopCategories,
-    selectedShopId,
     activeShopId,
     selectedCategories,
     sortOption,
@@ -55,7 +54,7 @@ export default function ShopsPage() {
               <ShopSidebar
                 shopsLoading={shopsLoading}
                 filteredShops={shops}
-                selectedShopId={selectedShopId}
+                selectedShopId={activeShopId}
                 onShopSelect={onShopSelect}
                 minRating={minRating}
                 onMinRatingChange={setMinRating}
