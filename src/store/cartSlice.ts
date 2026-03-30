@@ -1,11 +1,28 @@
-import { createSlice } from '@reduxjs/toolkit';
-import { Product, CartItem } from '@/store/types';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import type { CartItem, Coupon, Product } from '@/store/types';
 
-const loadCart = () => {
+type CartState = {
+  items: CartItem[];
+  couponCode: string;
+  appliedCoupon: Coupon | null;
+};
+
+const loadCart = (): CartItem[] => {
   if (typeof window === 'undefined') return [];
 
   const data = localStorage.getItem('cart');
   return data ? JSON.parse(data) : [];
+};
+
+const loadCoupon = (): { couponCode: string; appliedCoupon: Coupon | null } => {
+  if (typeof window === 'undefined') {
+    return { couponCode: '', appliedCoupon: null };
+  }
+
+  const data = localStorage.getItem('coupon');
+  return data
+    ? (JSON.parse(data) as { couponCode: string; appliedCoupon: Coupon | null })
+    : { couponCode: '', appliedCoupon: null };
 };
 
 const saveCart = (items: CartItem[]) => {
@@ -14,18 +31,25 @@ const saveCart = (items: CartItem[]) => {
   }
 };
 
-const initialState = {
-  items: loadCart() as {
-    product: Product;
-    quantity: number;
-  }[],
+const saveCoupon = (couponCode: string, appliedCoupon: Coupon | null) => {
+  if (typeof window !== 'undefined') {
+    localStorage.setItem('coupon', JSON.stringify({ couponCode, appliedCoupon }));
+  }
+};
+
+const couponState = loadCoupon();
+
+const initialState: CartState = {
+  items: loadCart(),
+  couponCode: couponState.couponCode,
+  appliedCoupon: couponState.appliedCoupon,
 };
 
 const cartSlice = createSlice({
   name: 'cart',
   initialState,
   reducers: {
-    addToCart(state, action) {
+    addToCart(state, action: PayloadAction<Product>) {
       const existing = state.items.find((item) => item.product.id === action.payload.id);
 
       if (existing) {
@@ -40,27 +64,36 @@ const cartSlice = createSlice({
       saveCart(state.items);
     },
 
-    removeFromCart(state, action) {
+    removeFromCart(state, action: PayloadAction<string>) {
       state.items = state.items.filter((item) => item.product.id !== action.payload);
       saveCart(state.items);
     },
 
-    changeQuantity(state, action) {
+    changeQuantity(
+      state,
+      action: PayloadAction<{ productId: string; quantity: number }>,
+    ) {
       const { productId, quantity } = action.payload;
       const item = state.items.find((i) => i.product.id === productId);
+
       if (item) {
         item.quantity = quantity;
       }
+
       saveCart(state.items);
     },
 
     clearCart(state) {
       state.items = [];
       saveCart(state.items);
+
+      state.couponCode = '';
+      state.appliedCoupon = null;
+      saveCoupon(state.couponCode, state.appliedCoupon);
     },
 
-    addManyToCart: (state, action) => {
-      action.payload.forEach((item: CartItem) => {
+    addManyToCart(state, action: PayloadAction<CartItem[]>) {
+      action.payload.forEach((item) => {
         const existing = state.items.find((i) => i.product.id === item.product.id);
 
         if (existing) {
@@ -72,11 +105,37 @@ const cartSlice = createSlice({
           });
         }
       });
+
+      saveCart(state.items);
+    },
+
+    setCouponCode(state, action: PayloadAction<string>) {
+      state.couponCode = action.payload;
+      saveCoupon(state.couponCode, state.appliedCoupon);
+    },
+
+    setAppliedCoupon(state, action: PayloadAction<Coupon | null>) {
+      state.appliedCoupon = action.payload;
+      saveCoupon(state.couponCode, state.appliedCoupon);
+    },
+
+    clearCouponAction(state) {
+      state.couponCode = '';
+      state.appliedCoupon = null;
+      saveCoupon(state.couponCode, state.appliedCoupon);
     },
   },
 });
 
-export const { addToCart, removeFromCart, changeQuantity, clearCart, addManyToCart } =
-  cartSlice.actions;
+export const {
+  addToCart,
+  removeFromCart,
+  changeQuantity,
+  clearCart,
+  addManyToCart,
+  setCouponCode,
+  setAppliedCoupon,
+  clearCouponAction,
+} = cartSlice.actions;
 
 export default cartSlice.reducer;

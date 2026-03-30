@@ -1,4 +1,4 @@
-import { CreateOrderBody, Order, Product, Shop } from './types';
+import { CreateOrderBody, Order, Product, Shop, Coupon } from './types';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 export const api = createApi({
@@ -7,17 +7,14 @@ export const api = createApi({
     baseUrl: '/api',
   }),
   endpoints: (builder) => ({
-    // shops
     getShops: builder.query<Shop[], void>({
       query: () => '/shops',
     }),
 
-    // products
     getProducts: builder.query<Product[], string>({
       query: (shopId) => `/products?shopId=${shopId}`,
     }),
 
-    // create order
     createOrder: builder.mutation<Order, CreateOrderBody>({
       query: (body) => ({
         url: '/orders',
@@ -29,6 +26,10 @@ export const api = createApi({
     getOrders: builder.query<Order[], void>({
       query: () => '/orders',
     }),
+
+    getCoupons: builder.query<Coupon[], void>({
+      query: () => '/coupons',
+    }),
   }),
 });
 
@@ -37,4 +38,5 @@ export const {
   useGetProductsQuery,
   useCreateOrderMutation,
   useGetOrdersQuery,
+  useGetCouponsQuery,
 } = api;

@@ -1,39 +1,46 @@
 import { prisma } from '@/lib/prisma';
-import { NextResponse } from 'next/server';
 
-export async function POST(request: Request) {
-  try {
-    const body = await request.json();
+type CreateOrderRequestBody = {
+  email: string;
+  phone: string;
+  address: string;
+  couponCode?: string;
+  discount?: number;
+  items: {
+    productId: string;
+    quantity: number;
+  }[];
+};
 
-    const { email, phone, address, items } = body;
+export async function POST(req: Request) {
+  const body: CreateOrderRequestBody = await req.json();
 
-    // basic validation
-    if (!email || !phone || !address || !items?.length) {
-      return NextResponse.json({ error: 'Invalid data' }, { status: 400 });
-    }
-
-    const order = await prisma.order.create({
-      data: {
-        email,
-        phone,
-        address,
-        items: {
-          create: items.map((item: any) => ({
-            productId: item.productId,
-            quantity: item.quantity,
-          })),
+  const order = await prisma.order.create({
+    data: {
+      email: body.email,
+      phone: body.phone,
+      address: body.address,
+      couponCode: body.couponCode,
+      discount: body.discount,
+      items: {
+        create: body.items.map((item) => ({
+          quantity: item.quantity,
+          product: {
+            connect: { id: item.productId },
+          },
+        })),
+      },
+    },
+    include: {
+      items: {
+        include: {
+          product: true,
         },
       },
-      include: {
-        items: true,
-      },
-    });
+    },
+  });
 
-    return NextResponse.json(order);
-  } catch (error) {
-    console.error(error);
-    return NextResponse.json({ error: 'Failed to create order' }, { status: 500 });
-  }
+  return Response.json(order);
 }
 
 export async function GET() {

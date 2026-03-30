@@ -22,6 +22,8 @@ export type Order = {
   email: string;
   phone: string;
   address: string;
+  couponCode?: string | null;
+  discount?: number | null;
   createdAt: string;
   items: OrderItem[];
 };
@@ -32,10 +34,19 @@ export type Shop = {
   rating: number;
 };
 
+export type Coupon = {
+  id: string;
+  code: string;
+  discount: number;
+  createdAt: string;
+};
+
 export type CreateOrderBody = {
   email: string;
   phone: string;
   address: string;
+  couponCode?: string;
+  discount?: number;
   items: {
     productId: string;
     quantity: number;
