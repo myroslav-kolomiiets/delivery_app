@@ -1,12 +1,12 @@
 'use client';
 
-import { Box, Grid, Skeleton, Rating, Typography } from '@mui/material';
+import { Box, Grid, Paper, Skeleton, Stack, Typography } from '@mui/material';
 import { ProductCart } from '@/components/shops/ProductCart';
-import { ShopCart } from '@/components/shops/ShopCart';
 import { Filters } from '@/components/shops/Filters';
 import { Pagination } from '@/components/ui/Pagination';
 import { useShopsPage } from '@/hooks/useShopsPage';
 import { useCartItems } from '@/hooks/useCartItems';
+import { ShopSidebar } from '@/components/shops/ShopSidebar';
 
 export default function ShopsPage() {
   const { isInCart } = useCartItems();
@@ -18,13 +18,16 @@ export default function ShopsPage() {
     selectedCategories,
     sortOption,
     minRating,
-    page,
-    setPage,
+    shopsPage,
+    setShopsPage,
+    productsPage,
+    setProductsPage,
     shopsLoading,
     productsLoading,
-    filteredShops,
-    paginatedProducts,
+    shops,
+    products,
     totalPages,
+    productsTotalPages,
     loadingProductId,
     onAddToCart,
     onShopSelect,
@@ -35,47 +38,40 @@ export default function ShopsPage() {
 
   return (
     <Box p={3}>
-      <Typography variant="h4" mb={3}>
-        Shops
-      </Typography>
+      <Grid container spacing={3} alignItems="stretch">
+        <Grid size={{ xs: 12, md: 3 }}>
+          <Paper
+            elevation={0}
+            sx={{
+              p: 2,
+              borderRadius: 3,
+              border: '1px solid',
+              borderColor: 'divider',
+              bgcolor: 'rgba(250, 250, 250, 0.96)',
+              boxShadow: '0 8px 24px rgba(0, 0, 0, 0.04)',
+            }}
+          >
+            <Stack spacing={2}>
+              <ShopSidebar
+                shopsLoading={shopsLoading}
+                filteredShops={shops}
+                selectedShopId={selectedShopId}
+                onShopSelect={onShopSelect}
+                minRating={minRating}
+                onMinRatingChange={setMinRating}
+              />
 
-      {!activeShopId && <Typography>Select a shop to view products</Typography>}
-
-      <Grid container spacing={3}>
-        <Grid size={{ sm: 12, md: 3 }} spacing={2} mb={4}>
-          <Box mt={2}>
-            <Typography>Filter by rating</Typography>
-            <Rating
-              precision={0.5}
-              name="simple-controlled"
-              value={minRating}
-              onChange={(e, newValue) => setMinRating(Number(newValue))}
-            />
-          </Box>
-
-          <Grid container spacing={2} size={12}>
-            {shopsLoading ? (
-              <Grid spacing={2}>
-                {[1, 2, 3].map((i) => (
-                  <Grid key={i}>
-                    <Skeleton variant="rectangular" height={100} />
-                  </Grid>
-                ))}
-              </Grid>
-            ) : (
-              filteredShops.map((shop) => (
-                <ShopCart
-                  key={shop.id}
-                  shop={shop}
-                  selectedShopId={selectedShopId}
-                  onSelectShop={onShopSelect}
-                />
-              ))
-            )}
-          </Grid>
+              <Pagination
+                page={shopsPage}
+                setPage={setShopsPage}
+                totalPages={totalPages}
+                compact
+              />
+            </Stack>
+          </Paper>
         </Grid>
 
-        <Grid size={{ sm: 12, md: 9 }}>
+        <Grid size={{ xs: 12, md: 9 }}>
           <Filters
             categories={shopCategories}
             selectedShopId={activeShopId}
@@ -87,39 +83,44 @@ export default function ShopsPage() {
 
           {activeShopId && (
             <>
-              <Typography variant="h6">Products:</Typography>
+              <Typography variant="h6" mb={2}>
+                Products:
+              </Typography>
 
-              {productsLoading ? (
-                <Grid container spacing={2}>
-                  {[1, 2, 3, 4].map((i) => (
-                    <Grid size={{ xs: 12, md: 4 }} key={i}>
-                      <Skeleton variant="rectangular" height={150} />
+              <Grid container spacing={2} alignItems="stretch">
+                {productsLoading ? (
+                  Array.from({ length: 4 }).map((_, i) => (
+                    <Grid key={i} size={{ xs: 12, sm: 6, md: 4 }}>
+                      <Skeleton variant="rectangular" height={240} />
                     </Grid>
-                  ))}
-                </Grid>
-              ) : paginatedProducts.length === 0 ? (
-                <Typography>No products found</Typography>
-              ) : (
-                <Grid container spacing={2}>
-                  {paginatedProducts.map((product) => {
+                  ))
+                ) : products.length === 0 ? (
+                  <Typography>No products found</Typography>
+                ) : (
+                  products.map((product) => {
                     const inCart = isInCart(product.id);
 
                     return (
-                      <ProductCart
-                        key={product.id}
-                        product={product}
-                        inCart={inCart}
-                        onAddToCart={onAddToCart}
-                        loadingProductId={loadingProductId}
-                      />
+                      <Grid key={product.id} size={{ xs: 12, sm: 6, md: 4 }}>
+                        <ProductCart
+                          product={product}
+                          inCart={inCart}
+                          onAddToCart={onAddToCart}
+                          loadingProductId={loadingProductId}
+                        />
+                      </Grid>
                     );
-                  })}
-                </Grid>
-              )}
+                  })
+                )}
+              </Grid>
+
+              <Pagination
+                page={productsPage}
+                setPage={setProductsPage}
+                totalPages={productsTotalPages}
+              />
             </>
           )}
-
-          <Pagination page={page} setPage={setPage} totalPages={totalPages} />
         </Grid>
       </Grid>
     </Box>

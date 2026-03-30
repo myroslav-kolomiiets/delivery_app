@@ -1,4 +1,4 @@
-import { Card, CardContent, Grid, Rating, Typography } from '@mui/material';
+import { Box, Card, CardContent, Rating, Typography } from '@mui/material';
 import type { Shop } from '@/store/types';
 
 type ShopCartProps = {
@@ -8,20 +8,46 @@ type ShopCartProps = {
 };
 
 export function ShopCart({ shop, selectedShopId, onSelectShop }: ShopCartProps) {
+  const active = selectedShopId === shop.id;
+
   return (
-    <Grid size={12}>
-      <Card
-        onClick={() => onSelectShop(shop.id)}
-        sx={{
-          cursor: 'pointer',
-          border: selectedShopId === shop.id ? '1px solid #1976d2' : '1px solid #ccc',
-        }}
-      >
-        <CardContent>
-          <Typography variant="h6">{shop.name}</Typography>
-          <Rating name="shop-rating" value={shop.rating} readOnly precision={0.5} />
-        </CardContent>
-      </Card>
-    </Grid>
+    <Card
+      onClick={() => onSelectShop(shop.id)}
+      sx={{
+        cursor: 'pointer',
+        border: '1px solid',
+        borderColor: active ? 'primary.main' : 'divider',
+        backgroundColor: active ? 'action.selected' : 'background.paper',
+        transition: 'all 0.2s ease',
+        '&:hover': {
+          borderColor: 'primary.main',
+          transform: 'translateY(-1px)',
+          boxShadow: 2,
+        },
+      }}
+    >
+      <CardContent sx={{ py: 1.5, '&:last-child': { pb: 1.5 } }}>
+        <Box
+          display="flex"
+          justifyContent="space-between"
+          alignItems="flex-start"
+          gap={2}
+        >
+          <Box>
+            <Typography variant="subtitle1" fontWeight={600}>
+              {shop.name}
+            </Typography>
+          </Box>
+
+          <Rating
+            name="shop-rating"
+            value={shop.rating}
+            readOnly
+            precision={0.5}
+            size="small"
+          />
+        </Box>
+      </CardContent>
+    </Card>
   );
 }

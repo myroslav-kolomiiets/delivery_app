@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 import { useSnackbar } from 'notistack';
 import { useGetCouponsQuery } from '@/store/api';
 import { findCouponByCode } from '@/lib/coupon-utils';
-import { setAppliedCoupon, setCouponCode, clearCouponAction } from '@/store/cartSlice';
+import { clearCouponAction, setAppliedCoupon, setCouponCode } from '@/store/cartSlice';
 
 export function useCouponsPage() {
   const dispatch = useDispatch();

@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useDispatch } from 'react-redux';
 import { useGetOrdersQuery } from '@/store/api';
@@ -9,7 +9,16 @@ export function useOrdersPage() {
   const dispatch = useDispatch();
   const router = useRouter();
 
-  const { data: orders = [], isLoading } = useGetOrdersQuery();
+  const [page, setPage] = useState(1);
+  const pageSize = 10;
+
+  const { data: ordersResponse, isLoading } = useGetOrdersQuery({
+    page,
+    limit: pageSize,
+  });
+
+  const orders = ordersResponse?.items ?? [];
+  const totalPages = ordersResponse?.totalPages ?? 0;
 
   const handleOrderAgain = useCallback(
     (order: Order) => {
@@ -21,6 +30,9 @@ export function useOrdersPage() {
 
   return {
     orders,
+    totalPages,
+    page,
+    setPage,
     isLoading,
     handleOrderAgain,
   };

@@ -3,12 +3,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useSnackbar } from 'notistack';
 import { useCreateOrderMutation, useGetCouponsQuery } from '@/store/api';
 import {
-  clearCart,
   changeQuantity,
+  clearCart,
+  clearCouponAction,
   removeFromCart,
   setAppliedCoupon,
   setCouponCode,
-  clearCouponAction,
 } from '@/store/cartSlice';
 import type { RootState } from '@/store';
 import type { CheckoutFormValues } from '@/hooks/useCheckoutForm';

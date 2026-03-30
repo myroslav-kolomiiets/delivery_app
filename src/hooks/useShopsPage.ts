@@ -1,12 +1,6 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { useGetProductsQuery, useGetShopsQuery } from '@/store/api';
-import {
-  categories as shopCategories,
-  filterAndSortProducts,
-  filterShopsByRating,
-  getTotalPages,
-  paginateItems,
-} from '@/lib/shop-utils';
+import { categories as shopCategories } from '@/lib/shop-utils';
 import { useAddToCart } from '@/hooks/useAddToCart';
 
 export function useShopsPage() {
@@ -14,57 +8,74 @@ export function useShopsPage() {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [sortOption, setSortOption] = useState<string>('');
   const [minRating, setMinRating] = useState<number>(0);
-  const [page, setPage] = useState(1);
+  const [shopsPage, setShopsPage] = useState(1);
+  const [productsPage, setProductsPage] = useState(1);
 
   const pageSize = 10;
 
-  const { data: shops, isLoading: shopsLoading } = useGetShopsQuery();
+  const { data: shopsResponse, isLoading: shopsLoading } = useGetShopsQuery({
+    page: shopsPage,
+    limit: pageSize,
+    minRating,
+  });
 
-  const filteredShops = useMemo(() => {
-    return filterShopsByRating(shops, minRating);
-  }, [shops, minRating]);
+  const shops = shopsResponse?.items ?? [];
+  const totalPages = shopsResponse?.totalPages ?? 0;
 
-  const activeShopId = selectedShopId ?? filteredShops[0]?.id ?? null;
+  const activeShopId = shops.some((shop) => shop.id === selectedShopId)
+    ? selectedShopId
+    : (shops[0]?.id ?? null);
 
-  const { data: products, isLoading: productsLoading } = useGetProductsQuery(
-    activeShopId!,
+  const productsQueryArgs = activeShopId
+    ? {
+        shopId: activeShopId,
+        page: productsPage,
+        limit: pageSize,
+        selectedCategories,
+        sortOption,
+      }
+    : {
+        shopId: '',
+        page: 1,
+        limit: pageSize,
+        selectedCategories: [],
+        sortOption: '',
+      };
+
+  const { data: productsResponse, isLoading: productsLoading } = useGetProductsQuery(
+    productsQueryArgs,
     {
       skip: !activeShopId,
     },
   );
 
-  const filteredProducts = useMemo(() => {
-    return filterAndSortProducts(products, selectedCategories, sortOption);
-  }, [products, selectedCategories, sortOption]);
-
-  const totalPages = useMemo(() => {
-    return getTotalPages(filteredProducts.length, pageSize);
-  }, [filteredProducts.length, pageSize]);
-
-  const paginatedProducts = useMemo(() => {
-    return paginateItems(filteredProducts, page, pageSize);
-  }, [filteredProducts, page, pageSize]);
+  const products = productsResponse?.items ?? [];
+  const productsTotalPages = productsResponse?.totalPages ?? 0;
 
   const { onAddToCart, loadingProductId } = useAddToCart();
 
   const handleMinRatingChange = (value: number) => {
     setMinRating(value);
-    setPage(1);
+    setShopsPage(1);
+    setSelectedShopId(null);
+    setProductsPage(1);
+    setSelectedCategories([]);
+    setSortOption('');
   };
 
   const handleShopSelect = (shopId: string) => {
     setSelectedShopId(shopId);
-    setPage(1);
+    setProductsPage(1);
   };
 
   const handleCategoriesChange = (updater: React.SetStateAction<string[]>) => {
     setSelectedCategories(updater);
-    setPage(1);
+    setProductsPage(1);
   };
 
   const handleSortChange = (value: string) => {
     setSortOption(value);
-    setPage(1);
+    setProductsPage(1);
   };
 
   return {
@@ -74,13 +85,16 @@ export function useShopsPage() {
     selectedCategories,
     sortOption,
     minRating,
-    page,
-    setPage,
+    shopsPage,
+    setShopsPage,
+    productsPage,
+    setProductsPage,
     shopsLoading,
     productsLoading,
-    filteredShops,
-    paginatedProducts,
+    shops,
+    products,
     totalPages,
+    productsTotalPages,
     loadingProductId,
     onAddToCart,
     onShopSelect: handleShopSelect,
