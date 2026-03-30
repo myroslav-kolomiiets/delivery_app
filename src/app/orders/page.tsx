@@ -1,18 +1,17 @@
 'use client';
 
-import { useGetOrdersQuery } from '@/store/api';
-import { Box, Typography, Card, CardContent, Button } from '@mui/material';
-import { useDispatch } from 'react-redux';
-import { addManyToCart } from '@/store/cartSlice';
-import { OrderItem, Order } from '@/store/types';
-import { useRouter } from 'next/navigation';
+import { Box, Typography } from '@mui/material';
+import { OrdersLoadingState } from '@/components/orders/OrdersLoadingState';
+import { OrdersEmptyState } from '@/components/orders/OrdersEmptyState';
+import { OrderCard } from '@/components/orders/OrderCard';
+import { useOrdersPage } from '@/hooks/useOrdersPage';
 
 export default function OrdersPage() {
-  const { data: orders, isLoading } = useGetOrdersQuery();
-  const dispatch = useDispatch();
-  const router = useRouter();
+  const { orders, isLoading, handleOrderAgain } = useOrdersPage();
 
-  if (isLoading) return <Typography>Loading...</Typography>;
+  if (isLoading) {
+    return <OrdersLoadingState />;
+  }
 
   return (
     <Box p={3}>
@@ -20,30 +19,13 @@ export default function OrdersPage() {
         Order History
       </Typography>
 
-      {orders?.map((order: Order) => (
-        <Card key={order.id} sx={{ mb: 2 }}>
-          <CardContent>
-            <Typography>{new Date(order.createdAt).toLocaleString()}</Typography>
-
-            {order.items.map((item: OrderItem) => (
-              <Typography key={item.id}>
-                {item.product.name} x {item.quantity}
-              </Typography>
-            ))}
-
-            <Button
-              variant="contained"
-              sx={{ mt: 2 }}
-              onClick={() => {
-                dispatch(addManyToCart(order.items));
-                router.push('/cart');
-              }}
-            >
-              Order again
-            </Button>
-          </CardContent>
-        </Card>
-      ))}
+      {orders.length === 0 ? (
+        <OrdersEmptyState />
+      ) : (
+        orders.map((order) => (
+          <OrderCard key={order.id} order={order} onOrderAgain={handleOrderAgain} />
+        ))
+      )}
     </Box>
   );
 }
