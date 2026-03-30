@@ -1,9 +1,17 @@
-import { CircularProgress, Stack } from '@mui/material';
+import { Box, CircularProgress, Stack, Typography } from '@mui/material';
 
 export function OrdersLoadingState() {
   return (
-    <Stack alignItems="center" justifyContent="center" sx={{ height: '100vh' }}>
-      <CircularProgress size="3rem" />
-    </Stack>
+    <Box p={3}>
+      <Stack
+        alignItems="center"
+        justifyContent="center"
+        sx={{ minHeight: '50vh' }}
+        spacing={2}
+      >
+        <CircularProgress />
+        <Typography color="text.secondary">Loading order history...</Typography>
+      </Stack>
+    </Box>
   );
 }

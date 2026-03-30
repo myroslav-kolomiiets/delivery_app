@@ -1,4 +1,15 @@
-import { Box, Button, Grid, TextField, Typography } from '@mui/material';
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Box,
+  Button,
+  Stack,
+  TextField,
+  Typography,
+} from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import LocalShippingOutlinedIcon from '@mui/icons-material/LocalShippingOutlined';
 import type { FieldErrors, UseFormRegister } from 'react-hook-form';
 import type { FormEventHandler } from 'react';
 import type { CheckoutFormValues } from '@/hooks/useCheckoutForm';
@@ -17,43 +28,65 @@ export function CheckoutForm({
   isLoading,
 }: CheckoutFormProps) {
   return (
-    <Box mt={4} component="form" onSubmit={onSubmit}>
-      <Typography variant="h5" mb={2}>
-        Checkout
-      </Typography>
+    <Accordion
+      defaultExpanded
+      elevation={0}
+      disableGutters
+      sx={{
+        border: '1px solid',
+        borderColor: 'divider',
+        borderRadius: 3,
+        overflow: 'hidden',
+        '&:before': { display: 'none' },
+      }}
+    >
+      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+        <Box display="flex" alignItems="center" gap={1}>
+          <LocalShippingOutlinedIcon color="primary" fontSize="small" />
+          <Typography variant="h6" fontWeight={800}>
+            Checkout
+          </Typography>
+        </Box>
+      </AccordionSummary>
 
-      <Grid container spacing={2}>
-        <Grid size={{ xs: 12, md: 4 }}>
-          <TextField
-            label="Email"
-            fullWidth
-            error={!!errors.email}
-            {...register('email')}
-          />
-        </Grid>
+      <AccordionDetails>
+        <Box component="form" onSubmit={onSubmit}>
+          <Stack spacing={2}>
+            <TextField
+              label="Email"
+              fullWidth
+              error={!!errors.email}
+              helperText={errors.email?.message || ' '}
+              {...register('email')}
+            />
 
-        <Grid size={{ xs: 12, md: 4 }}>
-          <TextField
-            label="Phone"
-            fullWidth
-            error={!!errors.phone}
-            {...register('phone')}
-          />
-        </Grid>
+            <TextField
+              label="Phone"
+              fullWidth
+              error={!!errors.phone}
+              helperText={errors.phone?.message || ' '}
+              {...register('phone')}
+            />
 
-        <Grid size={{ xs: 12, md: 4 }}>
-          <TextField
-            label="Address"
-            fullWidth
-            error={!!errors.address}
-            {...register('address')}
-          />
-        </Grid>
-      </Grid>
+            <TextField
+              label="Address"
+              fullWidth
+              error={!!errors.address}
+              helperText={errors.address?.message || ' '}
+              {...register('address')}
+            />
+          </Stack>
 
-      <Button type="submit" variant="contained" sx={{ mt: 3 }} disabled={isLoading}>
-        {isLoading ? 'Placing order...' : 'Submit Order'}
-      </Button>
-    </Box>
+          <Button
+            type="submit"
+            variant="contained"
+            sx={{ mt: 3, borderRadius: 2, textTransform: 'none' }}
+            disabled={isLoading}
+          >
+            {isLoading ? 'Placing order...' : 'Submit Order'}
+          </Button>
+        </Box>
+      </AccordionDetails>
+    </Accordion>
   );
 }
