@@ -2,14 +2,15 @@ import {
   Box,
   Button,
   Chip,
-  FormControl,
-  InputLabel,
+  Divider,
+  Menu,
   MenuItem,
   Paper,
-  Select,
   Stack,
   Typography,
 } from '@mui/material';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import { useState } from 'react';
 
 type FiltersProps = {
   categories: string[];
@@ -20,6 +21,12 @@ type FiltersProps = {
   onSortChange: (value: string) => void;
 };
 
+const sortLabels: Record<string, string> = {
+  'price-asc': 'Price ↑',
+  'price-desc': 'Price ↓',
+  name: 'Name A-Z',
+};
+
 export function Filters({
   categories,
   selectedShopId,
@@ -28,6 +35,24 @@ export function Filters({
   sortOption,
   onSortChange,
 }: FiltersProps) {
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const menuOpen = Boolean(anchorEl);
+
+  const selectedSortLabel = sortLabels[sortOption] ?? 'Sort by';
+
+  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleSortSelect = (value: string) => {
+    onSortChange(value);
+    handleMenuClose();
+  };
+
   return (
     <Paper
       elevation={0}
@@ -92,25 +117,69 @@ export function Filters({
           </Box>
         </Stack>
 
+        <Divider />
+
         <Stack
-          spacing={2}
           direction={{ xs: 'column', sm: 'row' }}
+          spacing={1.5}
           alignItems={{ xs: 'stretch', sm: 'center' }}
+          justifyContent="space-between"
         >
-          <FormControl fullWidth sx={{ minWidth: { sm: 180 } }}>
-            <InputLabel id="product-sort-by-select-label">Sort by</InputLabel>
-            <Select
-              fullWidth
+          <Box>
+            <Typography variant="subtitle2" color="text.secondary" mb={1}>
+              Sort by
+            </Typography>
+
+            <Chip
+              label={selectedSortLabel}
+              onClick={handleMenuOpen}
               disabled={!selectedShopId}
-              value={sortOption}
-              label="Sort by"
-              onChange={(e) => onSortChange(e.target.value)}
+              icon={<ArrowDropDownIcon />}
+              variant={sortOption ? 'filled' : 'outlined'}
+              color={sortOption ? 'primary' : 'default'}
+              sx={{
+                borderRadius: 999,
+                fontWeight: 700,
+                px: 0.5,
+              }}
+            />
+
+            <Menu
+              anchorEl={anchorEl}
+              open={menuOpen}
+              onClose={handleMenuClose}
+              PaperProps={{
+                sx: {
+                  mt: 1,
+                  borderRadius: 2.5,
+                  minWidth: 180,
+                  border: '1px solid',
+                  borderColor: 'divider',
+                },
+              }}
             >
-              <MenuItem value="price-asc">Price ↑</MenuItem>
-              <MenuItem value="price-desc">Price ↓</MenuItem>
-              <MenuItem value="name">Name A-Z</MenuItem>
-            </Select>
-          </FormControl>
+              <MenuItem
+                selected={sortOption === 'price-asc'}
+                onClick={() => handleSortSelect('price-asc')}
+              >
+                Price ↑
+              </MenuItem>
+              <MenuItem
+                selected={sortOption === 'price-desc'}
+                onClick={() => handleSortSelect('price-desc')}
+              >
+                Price ↓
+              </MenuItem>
+              <MenuItem
+                selected={sortOption === 'name'}
+                onClick={() => handleSortSelect('name')}
+              >
+                Name A-Z
+              </MenuItem>
+              <Divider />
+              <MenuItem onClick={() => handleSortSelect('')}>Reset sorting</MenuItem>
+            </Menu>
+          </Box>
 
           <Button
             variant="contained"
@@ -121,7 +190,9 @@ export function Filters({
             }}
             sx={{
               whiteSpace: 'nowrap',
-              minHeight: 56,
+              minHeight: 40,
+              borderRadius: 2,
+              textTransform: 'none',
             }}
           >
             Clear all
