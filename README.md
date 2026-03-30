@@ -65,14 +65,6 @@ npm run build
 
 ---
 
-## ✅ Requirement Compliance
-
-✔ Backend built and hosted самостоятельно (без Firebase)
-✔ Full-stack решение (frontend + API + DB)
-✔ Production deployment
-
----
-
 # 🧠 Tech Stack
 
 ## Frontend
@@ -257,7 +249,7 @@ src/
 * Redux Toolkit + RTK Query → scalable state & API layer
 * App Router → modern Next.js architecture
 * Prisma → type-safe database access
-* Custom hooks → reusable logic (debounce)
+* Custom hooks → reusable logic
 * Separation of concerns across layers
 
 ---
