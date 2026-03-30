@@ -1,4 +1,4 @@
-import { Card, CardContent, Rating, Typography, Box } from '@mui/material';
+import { Box, Card, CardContent, Rating, Typography } from '@mui/material';
 import type { Shop } from '@/store/types';
 
 type ShopCartProps = {

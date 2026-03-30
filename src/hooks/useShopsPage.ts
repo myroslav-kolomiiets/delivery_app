@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useState } from 'react';
 import { useGetProductsQuery, useGetShopsQuery } from '@/store/api';
 import { categories as shopCategories } from '@/lib/shop-utils';
 import { useAddToCart } from '@/hooks/useAddToCart';
@@ -8,13 +8,13 @@ export function useShopsPage() {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [sortOption, setSortOption] = useState<string>('');
   const [minRating, setMinRating] = useState<number>(0);
-  const [page, setPage] = useState(1);
+  const [shopsPage, setShopsPage] = useState(1);
   const [productsPage, setProductsPage] = useState(1);
 
   const pageSize = 10;
 
   const { data: shopsResponse, isLoading: shopsLoading } = useGetShopsQuery({
-    page,
+    page: shopsPage,
     limit: pageSize,
     minRating,
   });
@@ -22,11 +22,9 @@ export function useShopsPage() {
   const shops = shopsResponse?.items ?? [];
   const totalPages = shopsResponse?.totalPages ?? 0;
 
-  const activeShopId = selectedShopId ?? shops[0]?.id ?? null;
-
-  useEffect(() => {
-    setProductsPage(1);
-  }, [activeShopId, selectedCategories, sortOption]);
+  const activeShopId = shops.some((shop) => shop.id === selectedShopId)
+    ? selectedShopId
+    : (shops[0]?.id ?? null);
 
   const productsQueryArgs = activeShopId
     ? {
@@ -58,9 +56,11 @@ export function useShopsPage() {
 
   const handleMinRatingChange = (value: number) => {
     setMinRating(value);
-    setPage(1);
+    setShopsPage(1);
     setSelectedShopId(null);
     setProductsPage(1);
+    setSelectedCategories([]);
+    setSortOption('');
   };
 
   const handleShopSelect = (shopId: string) => {
@@ -85,8 +85,8 @@ export function useShopsPage() {
     selectedCategories,
     sortOption,
     minRating,
-    page,
-    setPage,
+    shopsPage,
+    setShopsPage,
     productsPage,
     setProductsPage,
     shopsLoading,

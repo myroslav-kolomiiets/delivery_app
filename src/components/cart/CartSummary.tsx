@@ -1,4 +1,4 @@
-import { Button, Divider, Stack, Typography, Box } from '@mui/material';
+import { Box, Button, Divider, Stack, Typography } from '@mui/material';
 import ReceiptLongOutlinedIcon from '@mui/icons-material/ReceiptLongOutlined';
 import LocalOfferOutlinedIcon from '@mui/icons-material/LocalOfferOutlined';
 import PaymentsOutlinedIcon from '@mui/icons-material/PaymentsOutlined';

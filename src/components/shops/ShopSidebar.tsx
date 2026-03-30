@@ -1,4 +1,4 @@
-import { Box, Divider, Paper, Stack, Typography, Skeleton } from '@mui/material';
+import { Box, Divider, Paper, Skeleton, Stack, Typography } from '@mui/material';
 import { ShopCart } from '@/components/shops/ShopCart';
 import { ShopRatingFilter } from '@/components/shops/ShopRatingFilter';
 import type { Shop } from '@/store/types';

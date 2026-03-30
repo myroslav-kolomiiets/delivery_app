@@ -1,10 +1,10 @@
 import {
+  Coupon,
   CreateOrderBody,
   Order,
-  Coupon,
-  ShopsResponse,
-  ProductsResponse,
   OrdersResponse,
+  ProductsResponse,
+  ShopsResponse,
 } from './types';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 

@@ -1,9 +1,7 @@
 'use client';
 
-import { useEffect } from 'react';
 import Link from 'next/link';
 import {
-  Badge,
   Box,
   Button,
   Chip,
@@ -16,7 +14,7 @@ import {
 import LocalOfferOutlinedIcon from '@mui/icons-material/LocalOfferOutlined';
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 import { useCartPage } from '@/hooks/useCartPage';
-import { useCheckoutForm, type CheckoutFormValues } from '@/hooks/useCheckoutForm';
+import { type CheckoutFormValues, useCheckoutForm } from '@/hooks/useCheckoutForm';
 import { CartItemCard } from '@/components/cart/CartItemCard';
 import { CartSummary } from '@/components/cart/CartSummary';
 import { CheckoutForm } from '@/components/cart/CheckoutForm';

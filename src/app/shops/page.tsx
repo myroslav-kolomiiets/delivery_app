@@ -1,6 +1,6 @@
 'use client';
 
-import { Box, Grid, Skeleton, Typography } from '@mui/material';
+import { Box, Grid, Paper, Skeleton, Stack, Typography } from '@mui/material';
 import { ProductCart } from '@/components/shops/ProductCart';
 import { Filters } from '@/components/shops/Filters';
 import { Pagination } from '@/components/ui/Pagination';
@@ -18,8 +18,8 @@ export default function ShopsPage() {
     selectedCategories,
     sortOption,
     minRating,
-    page,
-    setPage,
+    shopsPage,
+    setShopsPage,
     productsPage,
     setProductsPage,
     shopsLoading,
@@ -40,16 +40,35 @@ export default function ShopsPage() {
     <Box p={3}>
       <Grid container spacing={3} alignItems="stretch">
         <Grid size={{ xs: 12, md: 3 }}>
-          <ShopSidebar
-            shopsLoading={shopsLoading}
-            filteredShops={shops}
-            selectedShopId={selectedShopId}
-            onShopSelect={onShopSelect}
-            minRating={minRating}
-            onMinRatingChange={setMinRating}
-          />
+          <Paper
+            elevation={0}
+            sx={{
+              p: 2,
+              borderRadius: 3,
+              border: '1px solid',
+              borderColor: 'divider',
+              bgcolor: 'rgba(250, 250, 250, 0.96)',
+              boxShadow: '0 8px 24px rgba(0, 0, 0, 0.04)',
+            }}
+          >
+            <Stack spacing={2}>
+              <ShopSidebar
+                shopsLoading={shopsLoading}
+                filteredShops={shops}
+                selectedShopId={selectedShopId}
+                onShopSelect={onShopSelect}
+                minRating={minRating}
+                onMinRatingChange={setMinRating}
+              />
 
-          <Pagination page={page} setPage={setPage} totalPages={totalPages} compact />
+              <Pagination
+                page={shopsPage}
+                setPage={setShopsPage}
+                totalPages={totalPages}
+                compact
+              />
+            </Stack>
+          </Paper>
         </Grid>
 
         <Grid size={{ xs: 12, md: 9 }}>
