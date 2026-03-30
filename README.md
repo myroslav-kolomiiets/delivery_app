@@ -157,6 +157,7 @@ npm run dev
 * Add to cart
 * Cart management
 * Checkout form
+* Form validation (zod)
 * Create order
 * Data persistence in database
 
@@ -167,15 +168,14 @@ npm run dev
 * Product filtering (categories)
 * Sorting (price, name)
 * Shop filtering (rating)
-* Pagination
-* Form validation (zod)
 * Order history
-* Reorder functionality
 
 ---
 
 ## 🔴 Advanced Level (UX & Architecture)
 
+* Server-side pagination
+* Reorder functionality
 * Coupon system
 * Toast notifications
 * Loading states (skeletons, buttons)
