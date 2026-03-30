@@ -8,21 +8,28 @@ type PaginationProps = {
   page: number;
   setPage: Dispatch<SetStateAction<number>>;
   totalPages: number;
+  compact?: boolean;
 };
 
-export function Pagination({ page, setPage, totalPages }: PaginationProps) {
+export function Pagination({
+  page,
+  setPage,
+  totalPages,
+  compact = false,
+}: PaginationProps) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const hasPrevious = page > 1;
   const hasNext = page < totalPages && totalPages > 0;
+  const isCompact = compact || isMobile;
 
   return (
     <Paper
       elevation={0}
       sx={{
         mt: 3,
-        p: 1.5,
+        p: isCompact ? 1 : 1.5,
         borderRadius: 3,
         border: '1px solid',
         borderColor: 'divider',
@@ -31,8 +38,8 @@ export function Pagination({ page, setPage, totalPages }: PaginationProps) {
       }}
     >
       <Stack
-        direction={{ xs: 'row', sm: 'row' }}
-        spacing={1.5}
+        direction="row"
+        spacing={1}
         alignItems="center"
         justifyContent="space-between"
       >
@@ -40,50 +47,60 @@ export function Pagination({ page, setPage, totalPages }: PaginationProps) {
           variant="outlined"
           disabled={!hasPrevious}
           onClick={() => setPage((p) => p - 1)}
-          startIcon={!isMobile ? <ChevronLeftIcon /> : undefined}
+          aria-label="Previous page"
+          startIcon={isCompact ? undefined : <ChevronLeftIcon />}
           sx={{
             borderRadius: 2,
             textTransform: 'none',
-            minWidth: { xs: 44, sm: 120 },
-            px: { xs: 1, sm: 2 },
+            minWidth: isCompact ? 40 : 120,
+            px: isCompact ? 0 : 2,
           }}
         >
-          {isMobile ? <ChevronLeftIcon /> : 'Previous'}
+          {isCompact ? <ChevronLeftIcon /> : 'Previous'}
         </Button>
 
-        <Box
-          sx={{
-            px: 2,
-            py: 1,
-            borderRadius: 999,
-            border: '1px solid',
-            borderColor: 'divider',
-            bgcolor: 'background.paper',
-            minWidth: { xs: 96, sm: 120 },
-            textAlign: 'center',
-          }}
-        >
-          <Typography variant="caption" color="text.secondary" lineHeight={1}>
-            Page
+        {!isCompact && (
+          <Box
+            sx={{
+              px: 2,
+              py: 1,
+              borderRadius: 999,
+              border: '1px solid',
+              borderColor: 'divider',
+              bgcolor: 'background.paper',
+              minWidth: 120,
+              textAlign: 'center',
+            }}
+          >
+            <Typography variant="caption" color="text.secondary" lineHeight={1}>
+              Page
+            </Typography>
+            <Typography variant="subtitle1" fontWeight={800} lineHeight={1.1}>
+              {page} / {totalPages || 1}
+            </Typography>
+          </Box>
+        )}
+
+        {isCompact && (
+          <Typography variant="subtitle2" fontWeight={700} color="text.secondary">
+            {page}/{totalPages || 1}
           </Typography>
-          <Typography variant="subtitle1" fontWeight={800} lineHeight={1.1}>
-            {page} / {totalPages || 1}
-          </Typography>
-        </Box>
+        )}
 
         <Button
           variant="contained"
           disabled={!hasNext}
           onClick={() => setPage((p) => p + 1)}
-          endIcon={!isMobile ? <ChevronRightIcon /> : undefined}
+          aria-label="Next page"
+          endIcon={isCompact ? undefined : <ChevronRightIcon />}
           sx={{
             borderRadius: 2,
             textTransform: 'none',
-            minWidth: { xs: 44, sm: 120 },
-            px: { xs: 1, sm: 2 },
+            minWidth: isCompact ? 40 : 120,
+            px: isCompact ? 0 : 2,
           }}
         >
-          {isMobile ? <ChevronRightIcon /> : 'Next'}
+          {isCompact ? <ChevronRightIcon /> : 'Next'}
         </Button>
       </Stack>
     </Paper>

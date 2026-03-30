@@ -267,7 +267,6 @@ src/
 * Coupon logic is handled on frontend (should be validated on backend in production)
 * No authentication system (orders are anonymous)
 * No payment integration
-* Pagination is client-side (could be server-side for large datasets)
 * Minimal error boundary handling
 
 ---
@@ -277,7 +276,7 @@ src/
 * 🔐 Add authentication (JWT / NextAuth)
 * 💳 Integrate payment system (Stripe)
 * 🧠 Move coupon validation to backend
-* ⚡ Server-side pagination & filtering
+* ⚡  Server-side filtering
 * 📱 Improve mobile UX further
 * 🧪 Add unit and integration tests
 * 🧩 Extract reusable UI components
@@ -297,29 +296,6 @@ This project demonstrates:
 
 ---
 
-# 👨‍💻 Author
-
-Myroslav Kolomiiets — Frontend Developer (React / TypeScript)
-
----
-
-
-# 📁 Project Structure
-
-```
-prisma/
-src/
-  app/
-    api/
-    cart/
-    coupons/
-    orders/
-    shops/
-  components/
-  hooks/
-  lib/
-  store/
-```
 # 👨‍💻 Author
 
 Myroslav Kolomiiets — Frontend Developer (React / TypeScript)

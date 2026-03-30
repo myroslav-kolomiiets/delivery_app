@@ -28,10 +28,34 @@ export type Order = {
   items: OrderItem[];
 };
 
+export type OrdersResponse = {
+  items: Order[];
+  totalCount: number;
+  totalPages: number;
+  page: number;
+  limit: number;
+};
+
 export type Shop = {
   id: string;
   name: string;
   rating: number;
+};
+
+export type ShopsResponse = {
+  items: Shop[];
+  totalCount: number;
+  totalPages: number;
+  page: number;
+  limit: number;
+};
+
+export type ProductsResponse = {
+  items: Product[];
+  totalCount: number;
+  totalPages: number;
+  page: number;
+  limit: number;
 };
 
 export type Coupon = {

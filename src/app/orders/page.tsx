@@ -6,9 +6,11 @@ import { useOrdersPage } from '@/hooks/useOrdersPage';
 import { OrderCard } from '@/components/orders/OrderCard';
 import { OrdersEmptyState } from '@/components/orders/OrdersEmptyState';
 import { OrdersLoadingState } from '@/components/orders/OrdersLoadingState';
+import { Pagination } from '@/components/ui/Pagination';
 
 export default function OrdersPage() {
-  const { orders, isLoading, handleOrderAgain } = useOrdersPage();
+  const { orders, totalPages, page, setPage, isLoading, handleOrderAgain } =
+    useOrdersPage();
 
   if (isLoading) {
     return <OrdersLoadingState />;
@@ -71,6 +73,8 @@ export default function OrdersPage() {
           ))}
         </Stack>
       )}
+
+      <Pagination page={page} setPage={setPage} totalPages={totalPages} />
     </Box>
   );
 }

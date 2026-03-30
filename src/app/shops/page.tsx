@@ -20,11 +20,14 @@ export default function ShopsPage() {
     minRating,
     page,
     setPage,
+    productsPage,
+    setProductsPage,
     shopsLoading,
     productsLoading,
-    filteredShops,
-    paginatedProducts,
+    shops,
+    products,
     totalPages,
+    productsTotalPages,
     loadingProductId,
     onAddToCart,
     onShopSelect,
@@ -36,18 +39,20 @@ export default function ShopsPage() {
   return (
     <Box p={3}>
       <Grid container spacing={3} alignItems="stretch">
-        <Grid size={{ sm: 12, md: 3 }}>
+        <Grid size={{ xs: 12, md: 3 }}>
           <ShopSidebar
             shopsLoading={shopsLoading}
-            filteredShops={filteredShops}
+            filteredShops={shops}
             selectedShopId={selectedShopId}
             onShopSelect={onShopSelect}
             minRating={minRating}
             onMinRatingChange={setMinRating}
           />
+
+          <Pagination page={page} setPage={setPage} totalPages={totalPages} compact />
         </Grid>
 
-        <Grid size={{ sm: 12, md: 9 }}>
+        <Grid size={{ xs: 12, md: 9 }}>
           <Filters
             categories={shopCategories}
             selectedShopId={activeShopId}
@@ -67,24 +72,13 @@ export default function ShopsPage() {
                 {productsLoading ? (
                   Array.from({ length: 4 }).map((_, i) => (
                     <Grid key={i} size={{ xs: 12, sm: 6, md: 4 }}>
-                      <ProductCart
-                        product={{
-                          id: `loading-${i}`,
-                          name: '',
-                          price: 0,
-                          category: '',
-                        }}
-                        inCart={false}
-                        onAddToCart={() => {}}
-                        loadingProductId={null}
-                        isLoading
-                      />
+                      <Skeleton variant="rectangular" height={240} />
                     </Grid>
                   ))
-                ) : paginatedProducts.length === 0 ? (
+                ) : products.length === 0 ? (
                   <Typography>No products found</Typography>
                 ) : (
-                  paginatedProducts.map((product) => {
+                  products.map((product) => {
                     const inCart = isInCart(product.id);
 
                     return (
@@ -100,10 +94,14 @@ export default function ShopsPage() {
                   })
                 )}
               </Grid>
+
+              <Pagination
+                page={productsPage}
+                setPage={setProductsPage}
+                totalPages={productsTotalPages}
+              />
             </>
           )}
-
-          <Pagination page={page} setPage={setPage} totalPages={totalPages} />
         </Grid>
       </Grid>
     </Box>
