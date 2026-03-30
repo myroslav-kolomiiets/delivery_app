@@ -58,6 +58,13 @@ async function main() {
     });
   }
 
+  await prisma.coupon.createMany({
+    data: [
+      { code: 'SAVE10', discount: 10 },
+      { code: 'SAVE20', discount: 20 },
+    ],
+  });
+
   console.log('Database seeded');
 }
 

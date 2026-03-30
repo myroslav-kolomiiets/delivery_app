@@ -1,21 +1,41 @@
 import { prisma } from '@/lib/prisma';
 
+type CreateOrderRequestBody = {
+  email: string;
+  phone: string;
+  address: string;
+  couponCode?: string;
+  discount?: number;
+  items: {
+    productId: string;
+    quantity: number;
+  }[];
+};
+
 export async function POST(req: Request) {
-  const body = await req.json();
+  const body: CreateOrderRequestBody = await req.json();
 
   const order = await prisma.order.create({
     data: {
       email: body.email,
       phone: body.phone,
       address: body.address,
-
+      couponCode: body.couponCode,
+      discount: body.discount,
       items: {
-        create: body.items.map((item: any) => ({
+        create: body.items.map((item) => ({
           quantity: item.quantity,
           product: {
             connect: { id: item.productId },
           },
         })),
+      },
+    },
+    include: {
+      items: {
+        include: {
+          product: true,
+        },
       },
     },
   });

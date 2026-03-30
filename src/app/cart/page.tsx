@@ -1,7 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
-import { Box, Typography } from '@mui/material';
+import { Box, Button, TextField, Typography } from '@mui/material';
 import { useCartPage } from '@/hooks/useCartPage';
 import { useCheckoutForm, type CheckoutFormValues } from '@/hooks/useCheckoutForm';
 import { CartItemCard } from '@/components/cart/CartItemCard';
@@ -12,13 +11,17 @@ export default function CartPage() {
   const {
     items,
     total,
-    success,
+    discountAmount,
+    discountedTotal,
     isLoading,
+    couponCode,
+    handleCouponCodeChange,
+    applyCoupon,
+    clearCoupon,
     handleQuantityChange,
     handleRemoveItem,
     handleClearCart,
     handleSubmitOrder,
-    resetSuccess,
   } = useCartPage();
 
   const {
@@ -27,12 +30,6 @@ export default function CartPage() {
     formState: { errors },
     reset,
   } = useCheckoutForm();
-
-  useEffect(() => {
-    if (!items.length) {
-      resetSuccess();
-    }
-  }, [items.length, resetSuccess]);
 
   const onSubmit = async (data: CheckoutFormValues) => {
     await handleSubmitOrder(data);
@@ -45,12 +42,8 @@ export default function CartPage() {
         Cart
       </Typography>
 
-      {items.length === 0 && !success && (
+      {items.length === 0 && (
         <Typography color="text.secondary">Your cart is empty 🛒</Typography>
-      )}
-
-      {success && (
-        <Typography color="success.main">Order created successfully 🎉</Typography>
       )}
 
       {items.map((item) => (
@@ -62,7 +55,30 @@ export default function CartPage() {
         />
       ))}
 
-      {items.length > 0 && <CartSummary total={total} onClearCart={handleClearCart} />}
+      {items.length > 0 && (
+        <Box mt={2} display="flex" gap={2} alignItems="center">
+          <TextField
+            label="Coupon code"
+            value={couponCode}
+            onChange={(e) => handleCouponCodeChange(e.target.value)}
+          />
+          <Button variant="outlined" onClick={applyCoupon}>
+            Apply
+          </Button>
+          <Button variant="text" color="inherit" onClick={clearCoupon}>
+            Clear coupon
+          </Button>
+        </Box>
+      )}
+
+      {items.length > 0 && (
+        <CartSummary
+          total={total.toFixed(2)}
+          discountAmount={discountAmount.toFixed(2)}
+          discountedTotal={discountedTotal.toFixed(2)}
+          onClearCart={handleClearCart}
+        />
+      )}
 
       {items.length > 0 && (
         <CheckoutForm
