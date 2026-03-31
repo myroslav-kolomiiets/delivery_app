@@ -39,6 +39,7 @@ export default function CartPage() {
 
   const {
     register,
+    control,
     handleSubmit,
     formState: { errors },
     reset,
@@ -245,6 +246,7 @@ export default function CartPage() {
               <CheckoutForm
                 onSubmit={handleSubmit(onSubmit)}
                 register={register}
+                control={control}
                 errors={errors}
                 isLoading={isLoading}
               />
