@@ -10,13 +10,19 @@ import {
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import LocalShippingOutlinedIcon from '@mui/icons-material/LocalShippingOutlined';
-import type { FieldErrors, UseFormRegister } from 'react-hook-form';
-import type { FormEventHandler } from 'react';
+import {
+  Controller,
+  type Control,
+  type FieldErrors,
+  type UseFormRegister,
+  useFormState,
+} from 'react-hook-form';
 import type { CheckoutFormValues } from '@/hooks/useCheckoutForm';
 
 type CheckoutFormProps = {
-  onSubmit: FormEventHandler<HTMLFormElement>;
+  onSubmit: React.FormHTMLAttributes<HTMLFormElement>['onSubmit'];
   register: UseFormRegister<CheckoutFormValues>;
+  control: Control<CheckoutFormValues>;
   errors: FieldErrors<CheckoutFormValues>;
   isLoading: boolean;
 };
@@ -24,9 +30,16 @@ type CheckoutFormProps = {
 export function CheckoutForm({
   onSubmit,
   register,
+  control,
   errors,
   isLoading,
 }: CheckoutFormProps) {
+  const { touchedFields } = useFormState({ control });
+
+  const isEmailValid = touchedFields.email && !errors.email;
+  const isPhoneValid = touchedFields.phone && !errors.phone;
+  const isAddressValid = touchedFields.address && !errors.address;
+
   return (
     <Accordion
       defaultExpanded
@@ -55,24 +68,52 @@ export function CheckoutForm({
             <TextField
               label="Email"
               fullWidth
+              placeholder="you@example.com"
               error={!!errors.email}
-              helperText={errors.email?.message || ' '}
+              helperText={
+                errors.email?.message ||
+                (isEmailValid ? 'Email looks good' : 'We will send order updates here')
+              }
               {...register('email')}
             />
 
-            <TextField
-              label="Phone"
-              fullWidth
-              error={!!errors.phone}
-              helperText={errors.phone?.message || ' '}
-              {...register('phone')}
+            <Controller
+              name="phone"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  label="Phone"
+                  fullWidth
+                  inputMode="tel"
+                  autoComplete="tel"
+                  placeholder="+1 234 567 890"
+                  error={!!errors.phone}
+                  helperText={
+                    errors.phone?.message ||
+                    (isPhoneValid
+                      ? 'Phone number looks good'
+                      : 'Use a valid mobile phone number')
+                  }
+                  onChange={(e) => {
+                    const value = e.target.value.replace(/[^\d()+\-\s]/g, '');
+                    field.onChange(value);
+                  }}
+                />
+              )}
             />
 
             <TextField
               label="Address"
               fullWidth
+              multiline
+              minRows={3}
+              placeholder="Street, house number, apartment, city"
               error={!!errors.address}
-              helperText={errors.address?.message || ' '}
+              helperText={
+                errors.address?.message ||
+                (isAddressValid ? 'Address looks good' : 'Delivery address')
+              }
               {...register('address')}
             />
           </Stack>
@@ -80,6 +121,7 @@ export function CheckoutForm({
           <Button
             type="submit"
             variant="contained"
+            fullWidth
             sx={{ mt: 3, borderRadius: 2, textTransform: 'none' }}
             disabled={isLoading}
           >
