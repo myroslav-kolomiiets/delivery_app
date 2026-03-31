@@ -1,12 +1,14 @@
 'use client';
 
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 import {
   Box,
   Button,
   Chip,
   Divider,
   Paper,
+  Skeleton,
   Stack,
   TextField,
   Typography,
@@ -20,6 +22,8 @@ import { CartSummary } from '@/components/cart/CartSummary';
 import { CheckoutForm } from '@/components/cart/CheckoutForm';
 
 export default function CartPage() {
+  const [mounted, setMounted] = useState(false);
+
   const {
     items,
     total,
@@ -45,10 +49,56 @@ export default function CartPage() {
     reset,
   } = useCheckoutForm();
 
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const onSubmit = async (data: CheckoutFormValues) => {
     await handleSubmitOrder(data);
     reset();
   };
+
+  if (!mounted) {
+    return (
+      <Box p={3}>
+        <Paper
+          elevation={0}
+          sx={{
+            p: { xs: 2.5, md: 3 },
+            mb: 3,
+            borderRadius: 3,
+            border: '1px solid',
+            borderColor: 'divider',
+            background:
+              'linear-gradient(180deg, rgba(255,255,255,0.96) 0%, rgba(250,250,250,1) 100%)',
+          }}
+        >
+          <Stack spacing={1.5}>
+            <Box display="flex" alignItems="center" gap={1.25}>
+              <Skeleton variant="rounded" width={42} height={42} />
+              <Box sx={{ width: '100%' }}>
+                <Skeleton variant="text" width="30%" height={38} />
+                <Skeleton variant="text" width="55%" />
+              </Box>
+            </Box>
+
+            <Divider sx={{ my: 1 }} />
+
+            <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+              <Skeleton variant="rounded" width={92} height={32} />
+              <Skeleton variant="rounded" width={140} height={32} />
+            </Stack>
+          </Stack>
+        </Paper>
+
+        <Stack spacing={3}>
+          <Skeleton variant="rounded" height={240} />
+          <Skeleton variant="rounded" height={180} />
+          <Skeleton variant="rounded" height={220} />
+        </Stack>
+      </Box>
+    );
+  }
 
   return (
     <Box p={3}>
