@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import {
   AppBar,
@@ -37,6 +37,7 @@ export default function Header() {
   const pathname = usePathname();
   const cartItems = useSelector((state: RootState) => state.cart.items);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   const totalItems = useMemo(
     () => cartItems.reduce((sum, item) => sum + item.quantity, 0),
@@ -48,6 +49,10 @@ export default function Header() {
     [cartItems],
   );
 
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const activeTab =
     navItems.find((item) => pathname === item.href || pathname.startsWith(item.href))
       ?.href ?? false;
@@ -56,7 +61,7 @@ export default function Header() {
     setMobileOpen((prev) => !prev);
   };
 
-  const cartSummary = (
+  const cartSummary = mounted ? (
     <Paper
       elevation={0}
       sx={{
@@ -109,7 +114,7 @@ export default function Header() {
         </Typography>
       </Box>
     </Paper>
-  );
+  ) : null;
 
   const drawer = (
     <Box
@@ -234,27 +239,27 @@ export default function Header() {
                   item.href === '/cart' ? (
                     <Box display="flex" alignItems="center" gap={1}>
                       <span>{item.label}</span>
-                      <Badge
-                        badgeContent={totalItems}
-                        color="primary"
-                        sx={{
-                          '& .MuiBadge-badge': {
-                            fontWeight: 700,
-                            minWidth: 18,
-                            height: 18,
-                            fontSize: '0.7rem',
-                            right: '-5px',
-                          },
-                        }}
-                      />
+                      {mounted && (
+                        <Badge
+                          badgeContent={totalItems}
+                          color="primary"
+                          sx={{
+                            '& .MuiBadge-badge': {
+                              fontWeight: 700,
+                              minWidth: 18,
+                              height: 18,
+                              fontSize: '0.7rem',
+                              right: '-5px',
+                            },
+                          }}
+                        />
+                      )}
                     </Box>
                   ) : (
                     item.label
                   )
                 }
-                primaryTypographyProps={{
-                  fontWeight: active ? 800 : 600,
-                }}
+                slotProps={{ primary: { fontWeight: active ? 800 : 600 } }}
               />
             </ListItemButton>
           );
@@ -324,10 +329,12 @@ export default function Header() {
             <Tabs
               value={activeTab}
               textColor="inherit"
-              TabIndicatorProps={{
-                sx: {
-                  height: 3,
-                  borderRadius: 999,
+              slotProps={{
+                indicator: {
+                  sx: {
+                    height: 3,
+                    borderRadius: 999,
+                  },
                 },
               }}
               sx={{
@@ -391,12 +398,14 @@ export default function Header() {
         ModalProps={{
           keepMounted: true,
         }}
-        PaperProps={{
-          sx: {
-            width: { xs: '100%', sm: 340 },
-            maxWidth: '100%',
-            borderTopRightRadius: 18,
-            borderBottomRightRadius: 18,
+        slotProps={{
+          paper: {
+            sx: {
+              width: { xs: '100%', sm: 340 },
+              maxWidth: '100%',
+              borderTopRightRadius: 18,
+              borderBottomRightRadius: 18,
+            },
           },
         }}
       >

@@ -79,7 +79,9 @@ export function CartItemCard({ item, onQuantityChange, onRemove }: CartItemCardP
               label="Qty"
               value={item.quantity}
               onChange={(e) => onQuantityChange(item.product.id, Number(e.target.value))}
-              inputProps={{ min: 1 }}
+              slotProps={{
+                htmlInput: { min: 1 },
+              }}
               size="small"
               sx={{ width: { xs: '100%', sm: 110 } }}
             />
